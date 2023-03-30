@@ -33,7 +33,7 @@ public class JwtBlacklistLogoutHandler implements LogoutSuccessHandler {
             }
             new Thread(() -> blackJwtRepository.deleteByExpirationBefore(new Date().getTime())).start();
         } catch (Exception e) {
-            // no need to do something
+            log.error(e.getMessage());
         } finally {
             SecurityContextHolder.clearContext();
         }

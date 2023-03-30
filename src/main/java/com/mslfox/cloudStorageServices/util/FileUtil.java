@@ -1,14 +1,13 @@
 package com.mslfox.cloudStorageServices.util;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@Component
 public class FileUtil {
-    @Value("${file.storage.hash.algorithm}")
+    // Someday it will be useful
+    @Value("${file.system.storage.hash.algorithm:SHA-256}")
     private String algorithm;
 
     public String getHash(byte[] fileBytes) throws NoSuchAlgorithmException {

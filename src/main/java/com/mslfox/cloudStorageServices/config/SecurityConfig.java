@@ -1,9 +1,9 @@
 package com.mslfox.cloudStorageServices.config;
 
-import com.mslfox.cloudStorageServices.security.AuthenticationExceptionEntryPoint;
 import com.mslfox.cloudStorageServices.security.JwtBlacklistLogoutHandler;
 import com.mslfox.cloudStorageServices.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,16 +23,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class SecurityConfig implements WebMvcConfigurer {
+
     private final JwtBlacklistLogoutHandler jwtBlacklistLogoutHandler;
-    private final AuthenticationExceptionEntryPoint authenticationExceptionEntryPoint;
     private final JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
-
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,8 +49,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout().logoutUrl("/logout").logoutSuccessHandler(jwtBlacklistLogoutHandler)
-                .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationExceptionEntryPoint)
                 .and()
                 .build();
     }

@@ -1,8 +1,11 @@
 package com.mslfox.cloudStorageServices.security;
 
 import com.mslfox.cloudStorageServices.constant.ConstantsHolder;
+import com.mslfox.cloudStorageServices.model.error.ErrorResponse;
 import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,6 +20,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
@@ -31,12 +35,16 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage());
-                httpServletRequest.setAttribute("error-message", e.getMessage());
+                log.error(e.getMessage());
+                var errorResponse = new ErrorResponse(e.getMessage(), 1L);
+                httpServletResponse.getWriter().write(errorResponse.toJsonString());
+                httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
+
     public String getJwt(HttpServletRequest request) throws SignatureException {
         String authHeader = request.getHeader(ConstantsHolder.TOKEN_HEADER_NAME);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

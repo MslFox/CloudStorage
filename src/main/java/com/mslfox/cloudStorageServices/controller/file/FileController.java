@@ -1,52 +1,58 @@
 package com.mslfox.cloudStorageServices.controller.file;
 
-import com.mslfox.cloudStorageServices.dto.file.FileUploadRequest;
-import com.mslfox.cloudStorageServices.dto.file.FilenameChangeRequest;
-import com.mslfox.cloudStorageServices.dto.file.FilenameRequest;
-import com.mslfox.cloudStorageServices.model.file.FileInfoResponse;
-import com.mslfox.cloudStorageServices.service.file.FileService;
+import com.mslfox.cloudStorageServices.dto.file.FileInfo;
+import com.mslfox.cloudStorageServices.dto.file.FileRenameRequest;
+import com.mslfox.cloudStorageServices.dto.file.FileRequest;
+import com.mslfox.cloudStorageServices.service.file.impl.FileServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
+@Validated
 public class FileController {
-    private final FileService fileService;
+    private final FileServiceImpl fileServiceImpl;
 
     @GetMapping("list")
-    public List<FileInfoResponse> list(@RequestParam("limit") @Min(1) int limit) {
-        return fileService.getFileInfoList(limit);
+    public List<FileInfo> limitListUploadedFiles(@RequestParam("limit") @Min(1) int limit)  {
+        return fileServiceImpl.getFileInfoList(limit);
     }
 
     @PostMapping("file")
-    public String uploadFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws Exception {
-        return fileService.upload(fileUploadRequest);
+    public String handleFileUpload(@RequestParam("file") @Valid @NotNull MultipartFile multipartFile)  {
+        return fileServiceImpl.upload(multipartFile);
     }
 
     @DeleteMapping("file")
-    public String deleteFile(@ModelAttribute @Valid FilenameRequest filenameRequest) throws Exception {
-        return fileService.deleteFile(filenameRequest);
+    public String delete(@ModelAttribute @Valid FileRequest fileRequest) {
+        return fileServiceImpl.deleteFile(fileRequest);
+
     }
 
     @GetMapping("file")
-    public byte[] getFile(@ModelAttribute @Valid FilenameRequest filenameRequest) throws Exception {
-        return fileService.getFile(filenameRequest).getFile();
+    @ResponseBody
+    public Resource serveFile(@ModelAttribute @Valid FileRequest fileRequest)  {
+        return fileServiceImpl.getFileResource(fileRequest);
     }
 
     @PutMapping("file")
-    public String changeFileName(@RequestParam("filename") @NotEmpty String toUploadFilename, @RequestBody @Valid FilenameRequest filenameRequest) throws Exception {
-        var filenameChangeRequest = FilenameChangeRequest.builder()
-                .newFilename(filenameRequest.getFilename())
+    public String handleFileRename(@RequestParam("filename") @NotEmpty String toUploadFilename, @RequestBody @Valid FileRequest fileRequest) {
+        final var fileRenameRequest = FileRenameRequest.builder()
+                .newFilename(fileRequest.getFilename())
                 .toUploadFilename(toUploadFilename)
                 .build();
-        return fileService.changeFilename(filenameChangeRequest);
+        return fileServiceImpl.renameFile(fileRenameRequest);
     }
 }
 
