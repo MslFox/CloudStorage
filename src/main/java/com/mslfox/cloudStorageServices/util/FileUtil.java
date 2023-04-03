@@ -10,7 +10,7 @@ public class FileUtil {
     @Value("${file.system.storage.hash.algorithm:SHA-256}")
     private String algorithm;
 
-    public String getHash(byte[] fileBytes) throws NoSuchAlgorithmException {
+    public String calcHash(byte[] fileBytes) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(algorithm);
         int offset = 0;
         while (offset < fileBytes.length) {
@@ -28,5 +28,4 @@ public class FileUtil {
         }
         return builder.toString();
     }
-
 }

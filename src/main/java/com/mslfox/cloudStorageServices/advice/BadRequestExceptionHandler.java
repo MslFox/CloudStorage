@@ -1,24 +1,26 @@
 package com.mslfox.cloudStorageServices.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mslfox.cloudStorageServices.constant.ConstantsHolder;
 import com.mslfox.cloudStorageServices.exception.BadRequestException;
+import com.mslfox.cloudStorageServices.messages.ErrorMessage;
 import com.mslfox.cloudStorageServices.model.error.ErrorResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.validation.ValidationException;
+import javax.xml.bind.ValidationException;
 
 @Slf4j
-@RestControllerAdvice
+@Component
+@RequiredArgsConstructor
 public class BadRequestExceptionHandler {
+    private final ErrorMessage errorMessage;
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -36,7 +38,7 @@ public class BadRequestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handle(BindException e) {
         var errors = new StringBuilder();
-        errors.append(ConstantsHolder.ERROR_VALIDATION);
+        errors.append(errorMessage.validation);
         for (FieldError error : e.getFieldErrors()) {
             errors.append(error.getField());
             errors.append(" : ");
@@ -55,6 +57,6 @@ public class BadRequestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handle(JsonProcessingException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(ConstantsHolder.ERROR_JSON_PROCESSING, 1L);
+        return new ErrorResponse(errorMessage.jsonProcessing, 1L);
     }
 }

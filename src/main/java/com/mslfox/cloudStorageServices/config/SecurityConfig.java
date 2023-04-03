@@ -1,6 +1,6 @@
 package com.mslfox.cloudStorageServices.config;
 
-import com.mslfox.cloudStorageServices.security.JwtBlacklistLogoutHandler;
+import com.mslfox.cloudStorageServices.security.LogoutHandlerWithJWTBlacklist;
 import com.mslfox.cloudStorageServices.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 public class SecurityConfig implements WebMvcConfigurer {
 
-    private final JwtBlacklistLogoutHandler jwtBlacklistLogoutHandler;
+    private final LogoutHandlerWithJWTBlacklist jwtBlacklistLogoutHandler;
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -45,7 +45,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/", "/login").permitAll()
+                        .antMatchers("/", "/login" ).permitAll()
+                        .antMatchers("/openapi.yaml", "/swagger-ui/**","/v3/api-docs/**" ).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout().logoutUrl("/logout").logoutSuccessHandler(jwtBlacklistLogoutHandler)

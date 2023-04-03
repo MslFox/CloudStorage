@@ -1,6 +1,6 @@
 package com.mslfox.cloudStorageServices.repository.file;
 
-import com.mslfox.cloudStorageServices.dto.file.FileInfo;
+import com.mslfox.cloudStorageServices.model.file.FileInfoResponse;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FileStorage {
-     List<FileInfo> loadFileInfoList(String username, int limit) throws IOException;
+     List<FileInfoResponse> loadFileInfoList(String username, int limit) throws IOException;
 
      void store(String username, MultipartFile multipartFile) throws IOException;
 

@@ -16,7 +16,7 @@ import java.util.Date;
 @Component
 @AllArgsConstructor
 @Slf4j
-public class JwtBlacklistLogoutHandler implements LogoutSuccessHandler {
+public class LogoutHandlerWithJWTBlacklist implements LogoutSuccessHandler {
     private final JwtProvider jwtProvider;
     private final JwtFilter jwtFilter;
     private final BlackJwtRepository blackJwtRepository;

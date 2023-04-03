@@ -1,6 +1,6 @@
 package com.mslfox.cloudStorageServices.repository.file.impl;
 
-import com.mslfox.cloudStorageServices.dto.file.FileInfo;
+import com.mslfox.cloudStorageServices.model.file.FileInfoResponse;
 import com.mslfox.cloudStorageServices.repository.file.FileStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,12 +31,12 @@ public class FileSystemStorage implements FileStorage {
     }
 
     @Override
-    public List<FileInfo> loadFileInfoList(String username, int limit) throws IOException {
+    public List<FileInfoResponse> loadFileInfoList(String username, int limit) throws IOException {
         final File files = getUserFolderPath(username).toFile();
         return Arrays.stream(Objects.requireNonNull(files.listFiles()))
                 .sorted(Comparator.comparingLong(File::lastModified).reversed())
                 .limit(limit)
-                .map(file -> new FileInfo(file.getName(), file.length()))
+                .map(file -> new FileInfoResponse(file.getName(), file.length()))
                 .toList();
     }
 

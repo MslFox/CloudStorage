@@ -1,9 +1,11 @@
 package com.mslfox.cloudStorageServices.service.file.impl;
 
-import com.mslfox.cloudStorageServices.dto.file.FileInfo;
+import com.mslfox.cloudStorageServices.messages.ErrorMessage;
+import com.mslfox.cloudStorageServices.model.file.FileInfoResponse;
 import com.mslfox.cloudStorageServices.dto.file.FileRenameRequest;
 import com.mslfox.cloudStorageServices.dto.file.FileRequest;
 import com.mslfox.cloudStorageServices.exception.InternalServerException;
+import com.mslfox.cloudStorageServices.messages.SuccessMessage;
 import com.mslfox.cloudStorageServices.repository.file.impl.FileSystemStorage;
 import com.mslfox.cloudStorageServices.service.file.FileService;
 import lombok.AllArgsConstructor;
@@ -15,13 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.mslfox.cloudStorageServices.constant.ConstantsHolder.*;
-
 
 @Service
 @Slf4j
 @AllArgsConstructor
-public class FileServiceImpl implements FileService<FileInfo, FileRequest, FileRenameRequest> {
+public class FileServiceImpl implements FileService<FileInfoResponse, FileRequest, FileRenameRequest> {
+    private final ErrorMessage errorMessage;
+    private final SuccessMessage successMessage;
     private final FileSystemStorage fileSystemStorage;
 
     @Override
@@ -30,23 +32,21 @@ public class FileServiceImpl implements FileService<FileInfo, FileRequest, FileR
         final var currentUsername = getCurrentUserName();
         try {
             fileSystemStorage.store(currentUsername, multipartFile);
-            return SUCCESS_UPLOAD;
+            return successMessage.upload;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw InternalServerException.builder()
-                    .message(ERROR_UPLOAD_FILE).build();
+            throw new InternalServerException(errorMessage.uploadFile);
         }
     }
 
     @Override
-    public List<FileInfo> getFileInfoList(int limit) {
+    public List<FileInfoResponse> getFileInfoList(int limit) {
         final var currentUsername = getCurrentUserName();
         try {
             return fileSystemStorage.loadFileInfoList(currentUsername, limit);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw InternalServerException.builder()
-                    .message(ERROR_GET_FILE_LIST).build();
+            throw new InternalServerException(errorMessage.gettingFileList);
         }
     }
 
@@ -55,11 +55,10 @@ public class FileServiceImpl implements FileService<FileInfo, FileRequest, FileR
         final var currentUsername = getCurrentUserName();
         try {
             fileSystemStorage.delete(currentUsername, fileRequest.getFilename());
-            return SUCCESS_DELETE;
+            return successMessage.delete;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw InternalServerException.builder()
-                    .message(ERROR_DELETE_FILE).build();
+            throw new InternalServerException(errorMessage.deleteFile);
         }
     }
 
@@ -70,8 +69,7 @@ public class FileServiceImpl implements FileService<FileInfo, FileRequest, FileR
             return fileSystemStorage.loadAsResource(currentUsername, fileRequest.getFilename());
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw InternalServerException.builder()
-                    .message(ERROR_GET_FILE).build();
+            throw new InternalServerException(errorMessage.gettingFile);
         }
     }
 
@@ -83,17 +81,16 @@ public class FileServiceImpl implements FileService<FileInfo, FileRequest, FileR
                     currentUsername,
                     fileRenameRequest.getToUploadFilename(),
                     fileRenameRequest.getNewFilename());
-            return SUCCESS_RENAME;
+            return successMessage.rename;
         } catch (Exception e) {
-            throw InternalServerException.builder()
-                    .message(ERROR_RENAME_FILE).build();
+            throw new InternalServerException(errorMessage.renameFile);
         }
     }
 
     private String getCurrentUserName() {
         final var username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         if (username == null || username.length() == 0) {
-            throw new RuntimeException(ERROR_SECURITY_CONTEXT_INVALID_USERNAME);
+            throw new RuntimeException(errorMessage.securityInvalidUsername);
         }
         return username;
     }

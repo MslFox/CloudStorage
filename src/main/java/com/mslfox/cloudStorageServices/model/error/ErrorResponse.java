@@ -1,7 +1,6 @@
 package com.mslfox.cloudStorageServices.model.error;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,18 +8,8 @@ import lombok.Data;
 @Builder
 @Data
 @AllArgsConstructor
+@Schema(name = "error", description = "Represent an error that may occur when processing request")
 public final class ErrorResponse {
     private final String message;
     private final long id;
-
-    public String toJsonString() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            return mapper.writeValueAsString(this);
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при сериализации объекта в JSON", e);
-        }
-    }
-
 }

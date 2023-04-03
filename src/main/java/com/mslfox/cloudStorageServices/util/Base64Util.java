@@ -1,13 +1,13 @@
 package com.mslfox.cloudStorageServices.util;
 import java.util.Base64;
 
-public class Base64EncoderUtil {
+public class Base64Util {
 
-    public static String originalStringToBase64String(String originalString) {
+    public static String encode(String originalString) {
         return Base64.getEncoder().encodeToString(originalString.getBytes());
     }
     // may be useful for future
-    public static String Base64StringToDecodeString(String encodedString) {
+    public static String decode(String encodedString) {
         return new String(Base64.getDecoder().decode(encodedString));
     }
 }
