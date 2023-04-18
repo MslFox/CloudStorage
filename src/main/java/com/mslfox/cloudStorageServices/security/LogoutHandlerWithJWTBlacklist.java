@@ -2,7 +2,7 @@ package com.mslfox.cloudStorageServices.security;
 
 import com.mslfox.cloudStorageServices.entities.jwt.BlackJwtEntity;
 import com.mslfox.cloudStorageServices.repository.jwt.BlackJwtRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class LogoutHandlerWithJWTBlacklist implements LogoutSuccessHandler {
+
     private final JwtProvider jwtProvider;
     private final JwtFilter jwtFilter;
     private final BlackJwtRepository blackJwtRepository;

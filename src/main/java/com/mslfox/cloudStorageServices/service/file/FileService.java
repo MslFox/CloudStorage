@@ -1,18 +1,17 @@
 package com.mslfox.cloudStorageServices.service.file;
 
 import org.springframework.core.io.Resource;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface FileService<FileInfoDTO, FileDTO, FileRenameDTO>{
-     String upload(MultipartFile multipartFile) throws RuntimeException ;
+public interface FileService<FileInfoResponse, FileRequest, FileRenameRequest, FileUploadRequest> {
+    String upload(FileUploadRequest fileUploadRequest) throws RuntimeException;
 
-     List<FileInfoDTO> getFileInfoList(int limit) ;
+    List<FileInfoResponse> getFileInfoList(int limit);
 
-     String deleteFile(FileDTO fileDTO) throws RuntimeException;
+    String deleteFile(FileRequest fileRequest) throws RuntimeException;
 
-     Resource getFileResource(FileDTO fileDTO);
+    Resource getFileResource(FileRequest fileRequest);
 
-     String renameFile(FileRenameDTO fileRenameDTO) throws RuntimeException;
+    String renameFile(FileRenameRequest fileRenameRequest) throws RuntimeException;
 }

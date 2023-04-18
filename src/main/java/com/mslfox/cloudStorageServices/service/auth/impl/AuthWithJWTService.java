@@ -11,7 +11,6 @@ import com.mslfox.cloudStorageServices.service.auth.AuthTokenService;
 import com.mslfox.cloudStorageServices.util.Base64Util;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Data
-@ConfigurationProperties("user")
 public class AuthWithJWTService implements AuthTokenService<TokenResponse, AuthRequest> {
-    private boolean autoCreation;
     private final UserEntityRepository userEntityRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
@@ -30,37 +27,23 @@ public class AuthWithJWTService implements AuthTokenService<TokenResponse, AuthR
 
     @Override
     public TokenResponse login(AuthRequest authRequest) throws RuntimeException {
-        System.out.println(errorMessage.wrongPassword);
-        UserEntity userEntity;
-        try {
-            userEntity = loadUserByUsername(getUsernameEncoded(authRequest.getUsername()));
-        } catch (UsernameNotFoundException e) {
-            //TODO удалить авто-создание UserEntity -> boolean autoCreation, @ConfigurationProperties("user"), блок if()
-            // оставить ->
-            // throw BadRequestException.builder()
-            //     .message(ConstantsHolder.ERROR_USER_NOT_FOUND).build();.
-            if (autoCreation) {
-                userEntity = new UserEntity(getUsernameEncoded(authRequest.getUsername()), passwordEncoder.encode(authRequest.getPassword()));
-                System.out.println(userEntity);
-                userEntityRepository.save(userEntity);
-            } else {
-                throw new BadRequestException(errorMessage.userNotFound);
-            }
-        }
+        UserEntity userEntity = loadUserByUsername(getUsernameEncoded(authRequest.getUsername()));
+
         final var userEncodedPassword = userEntity.getPassword();
         final var authRequestPassword = authRequest.getPassword();
+
         if (passwordEncoder.matches(authRequestPassword, userEncodedPassword)) {
             final var jwt = jwtProvider.generateJwt(userEntity);
-            return TokenResponse.builder().authToken(jwt).build();
+            return new TokenResponse(jwt);
         } else {
-            throw new BadRequestException(errorMessage.wrongPassword);
+            throw new BadRequestException(errorMessage.wrongPassword());
         }
     }
 
     @Override
     public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
         return userEntityRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(errorMessage.userNotFound));
+                .orElseThrow(() -> new UsernameNotFoundException(errorMessage.userNotFound()));
     }
 
     private String getUsernameEncoded(String originalString) {

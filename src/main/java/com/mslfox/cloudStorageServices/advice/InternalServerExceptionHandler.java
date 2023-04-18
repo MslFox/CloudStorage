@@ -6,14 +6,13 @@ import com.mslfox.cloudStorageServices.model.error.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 @Slf4j
-//@RestControllerAdvice
-@Component
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class InternalServerExceptionHandler {
     private final ErrorMessage errorMessage;
@@ -28,7 +27,7 @@ public class InternalServerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handle(Exception e) {
         log.error(e.getMessage());
-        return new ErrorResponse(errorMessage.internal, 1L);
+        return new ErrorResponse(errorMessage.internalError(), 1L);
     }
 
 }

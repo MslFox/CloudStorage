@@ -1,0 +1,46 @@
+# To ensure proper handling of username and password, they added as encoded
+# username: "demo@demo.demo" encoded looks like "ZGVtb0BkZW1vLmRlbW8="
+# password: "DemoPassword" encoded looks like "$2a$12$ABM2IqGkby4io63GV0duNObZnCH6Syp2ubA7wcrcwfHg7YL37XzcG"
+
+# In authentication request, you need to use login and password in decoded form
+# username: demo@demo.demo
+# password: DemoPassword
+
+databaseChangeLog:
+  - changeSet:
+      id: create-demo@demo.demo
+      author: Mihail Lisin
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: ZGVtb0BkZW1vLmRlbW8=
+              - column:
+                  name: password
+                  value: $2a$12$ABM2IqGkby4io63GV0duNObZnCH6Syp2ubA7wcrcwfHg7YL37XzcG
+              - column:
+                  name: account_non_expired
+                  value: true
+              - column:
+                  name: account_non_locked
+                  value: true
+              - column:
+                  name: credentials_non_expired
+                  value: true
+              - column:
+                  name: enabled
+                  value: true
+            generatedKey:
+              columnNames: id
+              tableName: users
+        - insert:
+            tableName: user_authorities
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: (SELECT id FROM users WHERE username = 'ZGVtb0BkZW1vLmRlbW8=')
+              - column:
+                  name: authority
+                  value: ROLE_USER

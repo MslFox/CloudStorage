@@ -4,6 +4,7 @@ import com.mslfox.cloudStorageServices.entities.auth.UserAuthority;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,6 @@ public class JwtProvider {
     public String generateJwt(UserDetails userDetails) {
         String username = userDetails.getUsername();
         Date now = new Date();
-
         Date expiryDate = new Date(now.getTime() + expirationInHours * 3_600_000);
         return Jwts.builder()
                 .setSubject(username)
@@ -36,7 +36,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public boolean validateJwt(String jwt) throws Exception {
+    public boolean validateJwt(String jwt)  {
         Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt);
         return true;
     }
@@ -58,5 +58,4 @@ public class JwtProvider {
                 .getBody();
         return claims.getSubject();
     }
-
 }

@@ -8,15 +8,67 @@ import org.springframework.stereotype.Component;
 @Setter
 @ConfigurationProperties("error")
 public class ErrorMessage {
-    public String wrongPassword;
-    public String userNotFound;
-    public String gettingFile;
-    public String gettingFileList;
-    public String renameFile;
-    public String uploadFile;
-    public String deleteFile;
-    public String internal;
-    public String validation;
-    public String securityInvalidUsername;
-    public String jsonProcessing;
+    private String wrongPassword;
+    private String userNotFound;
+    private String gettingFile;
+    private String gettingFileList;
+    private String renameFile;
+    private String uploadFile;
+    private String deleteFile;
+    private String internal;
+    private String validation;
+    private String securityInvalidUsername;
+    private String jsonProcessing;
+    private String jwtStartBearer;
+    private String jwtBlacklisted;
+
+    public String wrongPassword() {
+        return wrongPassword;
+    }
+
+    public String userNotFound() {
+        return userNotFound;
+    }
+
+    public String gettingFile() {
+        return gettingFile;
+    }
+
+    public String gettingFileList() {
+        return gettingFileList;
+    }
+
+    public String renameFile() {
+        return renameFile;
+    }
+
+    public String uploadFile() {
+        return uploadFile;
+    }
+
+    public String deleteFile() {
+        return deleteFile;
+    }
+
+    public String internalError() {
+        return internal;
+    }
+
+    public String validation() {
+        return validation;
+    }
+
+    public String getSecurityInvalidUsernameMessage() {
+        return securityInvalidUsername;
+    }
+
+    public String jsonProcessing() {
+        return jsonProcessing;
+    }
+    public String jwtStartBearer() {
+        return jwtStartBearer;
+    }
+    public String getJwtBlacklisted() {
+        return jwtBlacklisted;
+    }
 }

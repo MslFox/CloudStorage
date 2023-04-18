@@ -1,11 +1,17 @@
 package com.mslfox.cloudStorageServices.dto.file;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Builder
+import javax.validation.constraints.NotEmpty;
+
 @Data
-public final class FileRenameRequest {
-    private final String newFilename;
-    private final String toUploadFilename;
+@NoArgsConstructor
+@AllArgsConstructor
+public class FileRenameRequest {
+    @NotEmpty
+    private String newFilename;
+    @NotEmpty
+    private String toUpdateFilename;
 }

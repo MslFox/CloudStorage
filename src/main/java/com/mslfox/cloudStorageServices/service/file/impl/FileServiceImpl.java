@@ -1,52 +1,48 @@
 package com.mslfox.cloudStorageServices.service.file.impl;
 
-import com.mslfox.cloudStorageServices.messages.ErrorMessage;
-import com.mslfox.cloudStorageServices.model.file.FileInfoResponse;
 import com.mslfox.cloudStorageServices.dto.file.FileRenameRequest;
 import com.mslfox.cloudStorageServices.dto.file.FileRequest;
+import com.mslfox.cloudStorageServices.dto.file.FileUploadRequest;
 import com.mslfox.cloudStorageServices.exception.InternalServerException;
+import com.mslfox.cloudStorageServices.messages.ErrorMessage;
 import com.mslfox.cloudStorageServices.messages.SuccessMessage;
-import com.mslfox.cloudStorageServices.repository.file.impl.FileSystemStorage;
+import com.mslfox.cloudStorageServices.model.file.FileInfoResponse;
+import com.mslfox.cloudStorageServices.repository.file.FileSystem.FileSystemStorage;
 import com.mslfox.cloudStorageServices.service.file.FileService;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 
 @Service
-@Slf4j
 @AllArgsConstructor
-public class FileServiceImpl implements FileService<FileInfoResponse, FileRequest, FileRenameRequest> {
+public class FileServiceImpl implements FileService<FileInfoResponse, FileRequest, FileRenameRequest, FileUploadRequest> {
     private final ErrorMessage errorMessage;
     private final SuccessMessage successMessage;
     private final FileSystemStorage fileSystemStorage;
 
     @Override
-    public String upload(MultipartFile multipartFile) throws RuntimeException {
+    public String upload(FileUploadRequest fileUploadRequest) throws RuntimeException {
 
         final var currentUsername = getCurrentUserName();
         try {
-            fileSystemStorage.store(currentUsername, multipartFile);
-            return successMessage.upload;
+            fileSystemStorage.store(currentUsername, fileUploadRequest.getFilename(), fileUploadRequest.getFile().getBytes());
+            return successMessage.getUploadMessage();
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new InternalServerException(errorMessage.uploadFile);
+            throw new InternalServerException(errorMessage.uploadFile());
         }
     }
 
     @Override
-    public List<FileInfoResponse> getFileInfoList(int limit) {
+    public List<FileInfoResponse> getFileInfoList(int limit) throws RuntimeException {
         final var currentUsername = getCurrentUserName();
         try {
             return fileSystemStorage.loadFileInfoList(currentUsername, limit);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new InternalServerException(errorMessage.gettingFileList);
+            throw new InternalServerException(errorMessage.gettingFileList());
         }
     }
 
@@ -55,10 +51,9 @@ public class FileServiceImpl implements FileService<FileInfoResponse, FileReques
         final var currentUsername = getCurrentUserName();
         try {
             fileSystemStorage.delete(currentUsername, fileRequest.getFilename());
-            return successMessage.delete;
+            return successMessage.getDeleteMessage();
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new InternalServerException(errorMessage.deleteFile);
+            throw new InternalServerException(errorMessage.deleteFile());
         }
     }
 
@@ -68,8 +63,7 @@ public class FileServiceImpl implements FileService<FileInfoResponse, FileReques
         try {
             return fileSystemStorage.loadAsResource(currentUsername, fileRequest.getFilename());
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new InternalServerException(errorMessage.gettingFile);
+            throw new InternalServerException(errorMessage.gettingFile());
         }
     }
 
@@ -79,18 +73,18 @@ public class FileServiceImpl implements FileService<FileInfoResponse, FileReques
         try {
             fileSystemStorage.updateFile(
                     currentUsername,
-                    fileRenameRequest.getToUploadFilename(),
+                    fileRenameRequest.getToUpdateFilename(),
                     fileRenameRequest.getNewFilename());
-            return successMessage.rename;
+            return successMessage.getRenameMessage();
         } catch (Exception e) {
-            throw new InternalServerException(errorMessage.renameFile);
+            throw new InternalServerException(errorMessage.renameFile());
         }
     }
 
     private String getCurrentUserName() {
         final var username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         if (username == null || username.length() == 0) {
-            throw new RuntimeException(errorMessage.securityInvalidUsername);
+            throw new RuntimeException(errorMessage.getSecurityInvalidUsernameMessage());
         }
         return username;
     }

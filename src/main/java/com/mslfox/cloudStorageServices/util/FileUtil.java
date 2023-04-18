@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class FileUtil {
-    // Someday it will be useful
     @Value("${file.system.storage.hash.algorithm:SHA-256}")
     private String algorithm;
 

@@ -10,7 +10,19 @@ import org.springframework.stereotype.Component;
 @Setter
 @ConfigurationProperties("success")
 public class SuccessMessage {
-    public String delete;
-    public String rename;
-    public String upload;
+    private String delete;
+    private String rename;
+    private String upload;
+
+    public String getDeleteMessage() {
+        return delete;
+    }
+
+    public String getRenameMessage() {
+        return rename;
+    }
+
+    public String getUploadMessage() {
+        return upload;
+    }
 }

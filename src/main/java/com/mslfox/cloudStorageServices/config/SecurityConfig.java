@@ -1,7 +1,7 @@
 package com.mslfox.cloudStorageServices.config;
 
-import com.mslfox.cloudStorageServices.security.LogoutHandlerWithJWTBlacklist;
 import com.mslfox.cloudStorageServices.security.JwtFilter;
+import com.mslfox.cloudStorageServices.security.LogoutHandlerWithJWTBlacklist;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +26,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 public class SecurityConfig implements WebMvcConfigurer {
 
-    private final LogoutHandlerWithJWTBlacklist jwtBlacklistLogoutHandler;
+    private final LogoutHandlerWithJWTBlacklist logoutHandlerWithJWTBlacklist;
     private final JwtFilter jwtFilter;
+    public static final String[] PUBLIC_URIS = new String[]{
+            "/login",
+            "/openapi.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui/index.html",
+            "/v3/api-docs/**"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,18 +44,17 @@ public class SecurityConfig implements WebMvcConfigurer {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .httpBasic().disable()
-                .formLogin().disable() //disable()
+                .formLogin().disable()
                 .csrf().disable()
                 .cors()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/", "/login" ).permitAll()
-                        .antMatchers("/openapi.yaml", "/swagger-ui/**","/v3/api-docs/**" ).permitAll()
+                        .antMatchers(PUBLIC_URIS).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout().logoutUrl("/logout").logoutSuccessHandler(jwtBlacklistLogoutHandler)
+                .logout().logoutUrl("/logout").logoutSuccessHandler(logoutHandlerWithJWTBlacklist)
                 .and()
                 .build();
     }

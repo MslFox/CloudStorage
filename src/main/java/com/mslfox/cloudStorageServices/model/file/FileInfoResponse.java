@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Schema(name = "file-info", description = "Contains file information")
-public final class FileInfoResponse {
+public class FileInfoResponse {
     private String filename;
     private Long size;
 }
