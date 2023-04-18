@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.mslfox.cloudStorageServices.constant.TestConstant.*;
+import static com.mslfox.cloudStorageServices.constant.TestConstantHolder.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
-import static com.mslfox.cloudStorageServices.constant.TestConstant.TEST_EXCEPTION_MESSAGE;
-import static com.mslfox.cloudStorageServices.constant.TestConstant.TEST_JWT;
+import static com.mslfox.cloudStorageServices.constant.TestConstantHolder.TEST_EXCEPTION_MESSAGE;
+import static com.mslfox.cloudStorageServices.constant.TestConstantHolder.TEST_JWT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;

@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static com.mslfox.cloudStorageServices.constant.TestConstant.*;
+import static com.mslfox.cloudStorageServices.constant.TestConstantHolder.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.verify;

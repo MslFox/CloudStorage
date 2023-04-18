@@ -1,6 +1,6 @@
 package com.mslfox.cloudStorageServices.constant;
 
-public class TestConstant {
+public class TestConstantHolder {
     public final static String TEST_STORAGE_LOCATION = "test_uploadStorage";
     public final static String TEST_JWT = "test_Jwt";
     public final static String TEST_JWT_SECRET =  "TestSecret+TestSecret+TestSecret+TestSecret+TestSecret";

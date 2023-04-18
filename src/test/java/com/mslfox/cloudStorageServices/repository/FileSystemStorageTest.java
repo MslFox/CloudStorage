@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import static com.mslfox.cloudStorageServices.constant.TestConstant.*;
+import static com.mslfox.cloudStorageServices.constant.TestConstantHolder.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
