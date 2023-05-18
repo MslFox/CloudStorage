@@ -5,7 +5,7 @@
 - хранение пользователей в postgres
 - доступно OpenApi swagger
 ## Дописываю фронт. Через пару дней будет доступно по адресу http://mslfox.ru/storage/
-
+![](./feedback.png)
 
 
  
